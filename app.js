@@ -75,6 +75,7 @@ function renderQuestion() {
   $("questionText").textContent = item.q;
   $("answers").innerHTML = "";
 
+  // سؤال ششم: دریافت اختیاری آیدی اینستاگرام
   if (item.type === "text") {
     const wrapper = document.createElement("div");
     wrapper.className = "instagram-question";
@@ -101,11 +102,14 @@ function renderQuestion() {
     button.addEventListener("click", submitInstagram);
 
     input.addEventListener("keydown", event => {
-      if (event.key === "Enter") submitInstagram();
+      if (event.key === "Enter") {
+        submitInstagram();
+      }
     });
 
     wrapper.append(input, note, button);
     $("answers").appendChild(wrapper);
+
   } else {
     [item.yes, item.no].forEach((label, choice) => {
       const button = document.createElement("button");
@@ -133,6 +137,7 @@ function burst() {
     particle.style.setProperty("--x", `${(Math.random() - 0.5) * 300}px`);
     particle.style.setProperty("--y", `${-70 - Math.random() * 230}px`);
     host.appendChild(particle);
+
     setTimeout(() => particle.remove(), 1200);
   }
 }
@@ -140,7 +145,10 @@ function burst() {
 function choose(choice, button) {
   if (button.disabled) return;
 
-  [...$("answers").children].forEach(b => b.disabled = true);
+  [...$("answers").children].forEach(b => {
+    b.disabled = true;
+  });
+
   button.classList.add("selected");
 
   answers[index] = choice;
@@ -163,6 +171,7 @@ function submitInstagram() {
   const input = $("instagramInput");
   if (!input) return;
 
+  // ذخیره آیدی؛ خالی بودن آن مجاز است
   instagramAnswer = input.value.trim().slice(0, 100);
 
   index++;
@@ -204,6 +213,7 @@ function makePayload() {
   return {
     name: "مبینا",
 
+    // فقط پنج سؤال بله/خیر در answers قرار می‌گیرند
     answers: answers.map((answer, i) => ({
       question: questions[i].q,
       answer: answer === 0 ? questions[i].yes : questions[i].no,
@@ -214,14 +224,14 @@ function makePayload() {
     positiveCount: answers.filter(a => a === 0).length,
     negativeCount: answers.filter(a => a === 1).length,
 
-    // آیدی اینستاگرام از سؤال ششم
+    // آیدی سؤال ششم با نام instagram ارسال می‌شود
     instagram: instagramAnswer,
 
     proposalResponse: finalChoice,
     completedAt: new Date().toISOString(),
 
-    submissionId: crypto.randomUUID
-      ? crypto.randomUUID()
+    submissionId: window.crypto?.randomUUID
+      ? window.crypto.randomUUID()
       : `${Date.now()}-${Math.random().toString(16).slice(2)}`
   };
 }
@@ -235,13 +245,18 @@ async function sendResult() {
   $("sendStatus").textContent = "دارم نتیجه رو ارسال می‌کنم… 💌";
 
   try {
-    const response = await fetch("/.netlify/functions/submit-result", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(makePayload())
-    });
+    const payload = makePayload();
+
+    const response = await fetch(
+      "/.netlify/functions/submit-result",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(payload)
+      }
+    );
 
     const data = await response.json().catch(() => ({}));
 
@@ -253,6 +268,8 @@ async function sendResult() {
       "نتیجه با موفقیت برای سازنده ارسال شد. 💜";
 
   } catch (error) {
+    console.error("Submit error:", error);
+
     $("sendStatus").textContent =
       "نتونستم نتیجه رو ارسال کنم. لطفاً اتصال اینترنت رو بررسی کن و به سازنده خبر بده. 🌷";
 
@@ -274,6 +291,7 @@ function answerProposal(choice) {
       : "هیچ عجله‌ای نیست مبینا! 🙈 مهم اینه که با خیال راحت و وقتی خودت خواستی تصمیم بگیری. 🌷";
 
   $("responseBox").classList.remove("hidden");
+
   burst();
   sendResult();
 }
@@ -298,5 +316,7 @@ $("startBtn").addEventListener("click", () => {
 });
 
 $("toProposalBtn").addEventListener("click", () => show("proposal"));
+
 $("yesBtn").addEventListener("click", () => answerProposal("yes"));
+
 $("thinkBtn").addEventListener("click", () => answerProposal("think"));
