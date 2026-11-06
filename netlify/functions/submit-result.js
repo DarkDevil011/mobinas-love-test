@@ -18,7 +18,9 @@ exports.handler = async (event) => {
 
   if (!token || !chatId) {
     console.error("Telegram environment variables are missing");
-    return json(500, { error: "تنظیمات تلگرام در سرور کامل نیست." });
+    return json(500, {
+      error: "تنظیمات تلگرام در سرور کامل نیست."
+    });
   }
 
   let data;
@@ -26,7 +28,9 @@ exports.handler = async (event) => {
   try {
     data = JSON.parse(event.body || "{}");
   } catch {
-    return json(400, { error: "اطلاعات ارسالی نامعتبر است." });
+    return json(400, {
+      error: "اطلاعات ارسالی نامعتبر است."
+    });
   }
 
   if (
@@ -36,7 +40,9 @@ exports.handler = async (event) => {
     data.answers.length !== 5 ||
     !["yes", "think"].includes(data.proposalResponse)
   ) {
-    return json(400, { error: "اطلاعات تست کامل نیست." });
+    return json(400, {
+      error: "اطلاعات تست کامل نیست."
+    });
   }
 
   const escapeHtml = (value) =>
@@ -55,9 +61,17 @@ exports.handler = async (event) => {
     `💗 امتیاز نهایی: <b>${Number(data.score) || 0}٪</b>`,
     `😍 پاسخ مثبت: ${Number(data.positiveCount) || 0}`,
     `🌷 پاسخ منفی: ${Number(data.negativeCount) || 0}`,
-    `💞 پاسخ نهایی: <b>${data.proposalResponse === "yes" ? "بله ❤️" : "نیاز به فکر بیشتر 🙈"}</b>`,
+    "",
     `📸 آیدی اینستاگرام: ${escapeHtml(data.instagram || "وارد نشده")}`,
-    `🕒 زمان: ${escapeHtml(data.completedAt || new Date().toISOString())}`
+    "",
+    `💞 پاسخ نهایی: <b>${
+      data.proposalResponse === "yes"
+        ? "بله ❤️"
+        : "نیاز به فکر بیشتر 🙈"
+    }</b>`,
+    `🕒 زمان: ${escapeHtml(
+      data.completedAt || new Date().toISOString()
+    )}`
   ];
 
   try {
@@ -80,13 +94,18 @@ exports.handler = async (event) => {
 
     if (!response.ok || !result.ok) {
       console.error("Telegram error:", result);
-      return json(502, { error: "ارسال پیام تلگرام ناموفق بود." });
+      return json(502, {
+        error: "ارسال پیام تلگرام ناموفق بود."
+      });
     }
 
     return json(200, { ok: true });
 
   } catch (error) {
     console.error("Telegram connection error:", error);
-    return json(502, { error: "ارتباط با تلگرام برقرار نشد." });
+
+    return json(502, {
+      error: "ارتباط با تلگرام برقرار نشد."
+    });
   }
 };
