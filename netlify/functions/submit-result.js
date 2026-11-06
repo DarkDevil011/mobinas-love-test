@@ -56,6 +56,7 @@ exports.handler = async (event) => {
     `😍 پاسخ مثبت: ${Number(data.positiveCount) || 0}`,
     `🌷 پاسخ منفی: ${Number(data.negativeCount) || 0}`,
     `💞 پاسخ نهایی: <b>${data.proposalResponse === "yes" ? "بله ❤️" : "نیاز به فکر بیشتر 🙈"}</b>`,
+    `📸 آیدی اینستاگرام: ${escapeHtml(data.instagram || "وارد نشده")}`,
     `🕒 زمان: ${escapeHtml(data.completedAt || new Date().toISOString())}`
   ];
 
