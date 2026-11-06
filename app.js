@@ -29,6 +29,12 @@ const questions = [
     emoji: "🙈",
     yes: "آره، پیش اومده 🙈",
     no: "نه، راحت می‌گم 😄"
+  },
+  {
+    type: "text",
+    q: "اگه دوست داشتی، آیدی پیج اینستاگرامت رو برام بنویس 💜",
+    emoji: "📸",
+    placeholder: "@your_id"
   }
 ];
 
@@ -38,6 +44,7 @@ const views = ["welcome", "game", "result", "proposal"];
 let index = 0;
 let score = 50;
 let answers = [];
+let instagramAnswer = "";
 let finalChoice = null;
 let sending = false;
 
@@ -68,14 +75,47 @@ function renderQuestion() {
   $("questionText").textContent = item.q;
   $("answers").innerHTML = "";
 
-  [item.yes, item.no].forEach((label, choice) => {
+  if (item.type === "text") {
+    const wrapper = document.createElement("div");
+    wrapper.className = "instagram-question";
+
+    const input = document.createElement("input");
+    input.id = "instagramInput";
+    input.type = "text";
+    input.maxLength = 100;
+    input.placeholder = item.placeholder;
+    input.autocomplete = "off";
+    input.dir = "ltr";
+    input.className = "instagram-input";
+    input.value = instagramAnswer;
+
+    const note = document.createElement("p");
+    note.className = "instagram-note";
+    note.textContent =
+      "این قسمت کاملاً اختیاریه؛ اگه راحت نیستی می‌تونی خالی بذاری 🌷";
+
     const button = document.createElement("button");
-    button.className = "answer-btn";
     button.type = "button";
-    button.textContent = label;
-    button.addEventListener("click", () => choose(choice, button));
-    $("answers").appendChild(button);
-  });
+    button.className = "instagram-submit-btn";
+    button.textContent = "ثبت و ادامه 💜";
+    button.addEventListener("click", submitInstagram);
+
+    input.addEventListener("keydown", event => {
+      if (event.key === "Enter") submitInstagram();
+    });
+
+    wrapper.append(input, note, button);
+    $("answers").appendChild(wrapper);
+  } else {
+    [item.yes, item.no].forEach((label, choice) => {
+      const button = document.createElement("button");
+      button.className = "answer-btn";
+      button.type = "button";
+      button.textContent = label;
+      button.addEventListener("click", () => choose(choice, button));
+      $("answers").appendChild(button);
+    });
+  }
 
   updateMeter();
 }
@@ -104,25 +144,39 @@ function choose(choice, button) {
   button.classList.add("selected");
 
   answers[index] = choice;
-  score = Math.max(0, Math.min(100, score + (choice === 0 ? 10 : -10)));
+
+  score = Math.max(
+    0,
+    Math.min(100, score + (choice === 0 ? 10 : -10))
+  );
 
   updateMeter();
   burst();
 
   setTimeout(() => {
     index++;
-
-    if (index < questions.length) {
-      renderQuestion();
-    } else {
-      showResult();
-    }
+    renderQuestion();
   }, 850);
+}
+
+function submitInstagram() {
+  const input = $("instagramInput");
+  if (!input) return;
+
+  instagramAnswer = input.value.trim().slice(0, 100);
+
+  index++;
+
+  if (index < questions.length) {
+    renderQuestion();
+  } else {
+    showResult();
+  }
 }
 
 function showResult() {
   const positives = answers.filter(x => x === 0).length;
-  const negatives = answers.length - positives;
+  const negatives = answers.filter(x => x === 1).length;
 
   $("finalScore").textContent = `${persian(score)}٪`;
   $("positiveCount").textContent = persian(positives);
@@ -149,22 +203,23 @@ function showResult() {
 function makePayload() {
   return {
     name: "مبینا",
+
     answers: answers.map((answer, i) => ({
       question: questions[i].q,
       answer: answer === 0 ? questions[i].yes : questions[i].no,
       positive: answer === 0
     })),
+
     score,
     positiveCount: answers.filter(a => a === 0).length,
     negativeCount: answers.filter(a => a === 1).length,
+
+    // آیدی اینستاگرام از سؤال ششم
+    instagram: instagramAnswer,
+
     proposalResponse: finalChoice,
-
-    // آیدی اینستاگرام؛ اختیاری
-    instagram: $("instagramInput")
-      ? $("instagramInput").value.trim().slice(0, 100)
-      : "",
-
     completedAt: new Date().toISOString(),
+
     submissionId: crypto.randomUUID
       ? crypto.randomUUID()
       : `${Date.now()}-${Math.random().toString(16).slice(2)}`
@@ -182,7 +237,9 @@ async function sendResult() {
   try {
     const response = await fetch("/.netlify/functions/submit-result", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json"
+      },
       body: JSON.stringify(makePayload())
     });
 
@@ -225,6 +282,7 @@ $("startBtn").addEventListener("click", () => {
   index = 0;
   score = 50;
   answers = [];
+  instagramAnswer = "";
   finalChoice = null;
   sending = false;
 
@@ -232,10 +290,8 @@ $("startBtn").addEventListener("click", () => {
   $("responseBox").textContent = "";
   $("sendStatus").textContent = "";
 
-  // پاک کردن آیدی قبلی هنگام شروع دوباره
-  if ($("instagramInput")) {
-    $("instagramInput").value = "";
-  }
+  $("yesBtn").disabled = false;
+  $("thinkBtn").disabled = false;
 
   show("game");
   renderQuestion();
