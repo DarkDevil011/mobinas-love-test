@@ -1,3 +1,4 @@
+
 <!doctype html>
 <html lang="fa" dir="rtl">
 <head>
@@ -6,23 +7,43 @@
   <meta name="theme-color" content="#fff0f6">
   <meta name="description" content="یک بازی کوچولوی دوستانه برای مبینا">
   <title>Mobina’s Love Test 💗</title>
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800;900&display=swap"
+    rel="stylesheet"
+  >
+
   <link rel="stylesheet" href="/styles.css">
 </head>
+
 <body>
+
   <div class="ambient" aria-hidden="true">
-    <span>💗</span><span>💕</span><span>🌸</span><span>♡</span><span>🦋</span><span>💘</span>
+    <span>💗</span>
+    <span>💕</span>
+    <span>🌸</span>
+    <span>♡</span>
+    <span>🦋</span>
+    <span>💘</span>
   </div>
 
   <main class="shell">
+
     <header class="topline">
-      <div class="brand"><span class="brand-heart">♥</span> Mobina’s Love Test</div>
+      <div class="brand">
+        <span class="brand-heart">♥</span>
+        Mobina’s Love Test
+      </div>
+
       <span class="tiny-tag">یه بازی کوچولوی صورتی 🎀</span>
     </header>
 
+    <!-- صفحه شروع -->
     <section id="welcome" class="panel welcome">
+
       <div class="hero-art" aria-hidden="true">
         <span class="hero-heart">💗</span>
         <span class="spark s1">✦</span>
@@ -31,23 +52,33 @@
       </div>
 
       <p class="eyebrow">یه سورپرایز کوچولو برات داریم</p>
+
       <h1>سلام مبینا! <span>💗</span></h1>
 
       <p class="intro">
         چندتا سؤال کوچولو دارم؛ می‌خوام بدونم وقتی با منی چه حسی داری! 🥹
       </p>
 
-      <button id="startBtn" class="primary-btn">شروع کنیم؟ 💌</button>
-      <p class="microcopy">فقط ۵ سؤال کوچولو؛ با خیال راحت جواب بده 🌷</p>
+      <button id="startBtn" class="primary-btn">
+        شروع کنیم؟ 💌
+      </button>
+
+      <p class="microcopy">
+        ۵ سؤال کوچولو و یه سؤال اختیاری 💜
+      </p>
+
     </section>
 
+    <!-- بخش سؤال‌ها -->
     <section id="game" class="panel game hidden" aria-live="polite">
+
       <div class="game-head">
-        <span class="step-label" id="stepLabel">سؤال ۱ از ۵</span>
+        <span class="step-label" id="stepLabel">سؤال ۱ از ۶</span>
         <span class="cute-label">با صداقت جواب بده 🥹</span>
       </div>
 
       <div class="love-meter">
+
         <div class="meter-labels">
           <span>حس معمولی 😊</span>
           <span>حس خیلی خوب ❤️</span>
@@ -62,23 +93,36 @@
           <span>نشانگر جواب‌ها</span>
           <strong id="percent">۵۰٪</strong>
         </div>
+
       </div>
 
       <div class="question-card">
+
         <div class="question-number" id="questionNumber">۰۱</div>
+
         <div class="question-emoji" id="questionEmoji">🥹</div>
+
         <h2 id="questionText"></h2>
+
         <div id="answers" class="answers"></div>
+
       </div>
 
       <p class="hint">
         هر جوابی بدی، همون جواب قشنگه؛ اینجا خبری از جواب اشتباه نیست 💞
       </p>
+
     </section>
 
+    <!-- نتیجه -->
     <section id="result" class="panel result hidden" aria-live="polite">
-      <div class="result-confetti" aria-hidden="true">💗 ✨ 💕 ✨ 💘</div>
+
+      <div class="result-confetti" aria-hidden="true">
+        💗 ✨ 💕 ✨ 💘
+      </div>
+
       <p class="eyebrow">پایان بازی کوچولو</p>
+
       <h1>نتیجه جواب‌هات! 🌸</h1>
 
       <div class="score-orb">
@@ -87,59 +131,71 @@
       </div>
 
       <div class="stats">
+
         <div>
           <strong id="positiveCount">۰</strong>
           <span>جواب مثبت 💗</span>
         </div>
+
         <div>
           <strong id="negativeCount">۰</strong>
           <span>جواب دیگه 💭</span>
         </div>
+
       </div>
 
       <p id="resultMessage" class="result-message"></p>
-      <button id="toProposalBtn" class="primary-btn">یه حرفی مونده… 💌</button>
+
+      <button id="toProposalBtn" class="primary-btn">
+        یه حرفی مونده… 💌
+      </button>
+
     </section>
 
+    <!-- پیشنهاد نهایی -->
     <section id="proposal" class="panel proposal hidden" aria-live="polite">
-      <div class="proposal-top">💌 <span>یه سؤال مهم‌تر</span> 💌</div>
+
+      <div class="proposal-top">
+        💌 <span>یه سؤال مهم‌تر</span> 💌
+      </div>
 
       <h1>مبینا، یه سؤال ازت دارم… 🥹</h1>
 
       <p class="proposal-copy">
-        راستش می‌خوام یه چیزی رو صادقانه بهت بگم…<br><br>
-        من ازت خوشم میاد و حس می‌کنم دوست دارم بیشتر از یه دوست معمولی بشناسمت.<br><br>
+        راستش می‌خوام یه چیزی رو صادقانه بهت بگم…
+        <br><br>
+        من ازت خوشم میاد و حس می‌کنم دوست دارم بیشتر از یه دوست معمولی بشناسمت.
+        <br><br>
         نمی‌خوام عجله‌ای داشته باشی یا تحت فشار باشی؛ فقط می‌خوام بدونم اگه این موضوع رو بدونی، چه حسی داری؟ 💗
       </p>
-<div class="instagram-field">
-  <label for="instagramInput">
-    اگه دوست داشتی، آیدی پیج اینستاگرامت رو هم برام بنویس 💜
-  </label>
-  <input
-    id="instagramInput"
-    type="text"
-    maxlength="100"
-    placeholder="مثلاً @your_id"
-    autocomplete="off"
-    dir="ltr"
-  >
-  <p class="instagram-note">
-    اختیاریه؛ اگه راحت نیستی، می‌تونی خالی بذاری.
-  </p>
-</div>
+
       <div class="proposal-actions">
-        <button id="yesBtn" class="primary-btn">منم حس خوبی دارم ❤️</button>
-        <button id="thinkBtn" class="soft-btn">بذار بیشتر فکر کنم 🙈</button>
+
+        <button id="yesBtn" class="primary-btn">
+          منم حس خوبی دارم ❤️
+        </button>
+
+        <button id="thinkBtn" class="soft-btn">
+          بذار بیشتر فکر کنم 🙈
+        </button>
+
       </div>
 
       <div id="responseBox" class="response-box hidden" role="status"></div>
+
       <p id="sendStatus" class="send-status" aria-live="polite"></p>
+
     </section>
 
-    <footer>ساخته‌شده با کلی ذوق و قلب صورتی 💗</footer>
+    <footer>
+      ساخته‌شده با کلی ذوق و قلب صورتی 💗
+    </footer>
+
   </main>
 
   <div id="heartBurst" class="heart-burst" aria-hidden="true"></div>
+
   <script src="/app.js"></script>
+
 </body>
 </html>
