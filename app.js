@@ -1,3 +1,4 @@
+
 const questions = [
   {
     q: "تا حالا شده منتظر پیام من باشی؟ 🥹",
@@ -81,7 +82,7 @@ function renderQuestion() {
 
 function burst() {
   const host = $("heartBurst");
-  const symbols = ["💗", "💕", "💘", "✨", "❤️"];
+  const symbols = ["💜", "💕", "💘", "✨", "💗"];
 
   for (let i = 0; i < 13; i++) {
     const particle = document.createElement("span");
@@ -131,7 +132,7 @@ function showResult() {
 
   if (positives >= 4) {
     message =
-      "چه جواب‌های قشنگی! 💗 به نظر میاد از صحبت کردن و وقت گذروندن با هم حس خوبی داری. 🥹";
+      "چه جواب‌های قشنگی! 💜 به نظر میاد از صحبت کردن و وقت گذروندن با هم حس خوبی داری. 🥹";
   } else if (positives >= 2) {
     message =
       "جواب‌هات یه ترکیب بامزه بود! 💕 شاید هنوز برای شناخت بیشتر همدیگه جا داشته باشیم.";
@@ -157,6 +158,12 @@ function makePayload() {
     positiveCount: answers.filter(a => a === 0).length,
     negativeCount: answers.filter(a => a === 1).length,
     proposalResponse: finalChoice,
+
+    // آیدی اینستاگرام؛ اختیاری
+    instagram: $("instagramInput")
+      ? $("instagramInput").value.trim().slice(0, 100)
+      : "",
+
     completedAt: new Date().toISOString(),
     submissionId: crypto.randomUUID
       ? crypto.randomUUID()
@@ -186,7 +193,7 @@ async function sendResult() {
     }
 
     $("sendStatus").textContent =
-      "نتیجه با موفقیت برای سازنده ارسال شد. 💗";
+      "نتیجه با موفقیت برای سازنده ارسال شد. 💜";
 
   } catch (error) {
     $("sendStatus").textContent =
@@ -224,6 +231,11 @@ $("startBtn").addEventListener("click", () => {
   $("responseBox").classList.add("hidden");
   $("responseBox").textContent = "";
   $("sendStatus").textContent = "";
+
+  // پاک کردن آیدی قبلی هنگام شروع دوباره
+  if ($("instagramInput")) {
+    $("instagramInput").value = "";
+  }
 
   show("game");
   renderQuestion();
