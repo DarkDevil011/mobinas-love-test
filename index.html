@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#fff0f6">
+  <meta name="description" content="یک بازی کوچولوی عاشقانه برای مبینا">
+  <title>Mobina’s Love Test 💗</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <div class="ambient" aria-hidden="true">
+    <span>💗</span><span>💕</span><span>🌸</span><span>♡</span><span>🦋</span><span>💘</span>
+  </div>
+  <main class="shell">
+    <header class="topline">
+      <div class="brand"><span class="brand-heart">♥</span> Mobina’s Love Test</div>
+      <span class="tiny-tag">یک بازی کوچولوی صورتی 🎀</span>
+    </header>
+
+    <section id="welcome" class="panel welcome">
+      <div class="hero-art" aria-hidden="true"><span class="hero-heart">💗</span><span class="spark s1">✦</span><span class="spark s2">✧</span><span class="mini-bear">🧸</span></div>
+      <p class="eyebrow">یه سورپرایز کوچولو برات داریم</p>
+      <h1>سلام مبینا! <span>💗</span></h1>
+      <p class="intro">یه بازی کوچولو برات دارم! ببینیم چقدر سلیقه‌هامون به هم نزدیکه؟ 🥹</p>
+      <div class="privacy-note"><span>🔒</span><span>با شروع بازی، می‌دونی که پاسخ‌هات و نتیجه‌ات بعد از پایان تست برای سازنده سایت ارسال می‌شن.</span></div>
+      <button id="startBtn" class="primary-btn">شروع کنیم؟ 💌</button>
+      <p class="microcopy">فقط ۵ سؤال کوچولو؛ با خیال راحت جواب بده 🌷</p>
+    </section>
+
+    <section id="game" class="panel game hidden" aria-live="polite">
+      <div class="game-head"><span class="step-label" id="stepLabel">سؤال ۱ از ۵</span><span class="cute-label">با صداقت جواب بده 🥹</span></div>
+      <div class="love-meter">
+        <div class="meter-labels"><span>ازم متنفری؟ 💔</span><span>عاشقتم ❤️</span></div>
+        <div class="meter-track"><div id="meterFill" class="meter-fill"></div><span id="meterHeart" class="meter-heart">💗</span></div>
+        <div class="meter-foot"><span>نوار عشق</span><strong id="percent">۵۰٪</strong></div>
+      </div>
+      <div class="question-card">
+        <div class="question-number" id="questionNumber">01</div>
+        <div class="question-emoji" id="questionEmoji">🥹</div>
+        <h2 id="questionText"></h2>
+        <div id="answers" class="answers"></div>
+      </div>
+      <p class="hint">هر جوابی بدی، همون جواب قشنگه؛ اینجا خبری از جواب اشتباه نیست 💞</p>
+    </section>
+
+    <section id="result" class="panel result hidden" aria-live="polite">
+      <div class="result-confetti" aria-hidden="true">💗 ✨ 💕 ✨ 💘</div>
+      <p class="eyebrow">پایان بازی کوچولو</p>
+      <h1>نتیجه‌ی سلیقه‌سنجی! 🌸</h1>
+      <div class="score-orb"><strong id="finalScore">۵۰٪</strong><span>نوار عشق</span></div>
+      <div class="stats"><div><strong id="positiveCount">۰</strong><span>پاسخ مثبت 💗</span></div><div><strong id="negativeCount">۰</strong><span>پاسخ منفی 💔</span></div></div>
+      <p id="resultMessage" class="result-message"></p>
+      <button id="toProposalBtn" class="primary-btn">یه حرفی مونده… 💌</button>
+    </section>
+
+    <section id="proposal" class="panel proposal hidden" aria-live="polite">
+      <div class="proposal-top">💌 <span>یه سؤال مهم‌تر</span> 💌</div>
+      <h1>مبینا، یه چیزی هست که باید بهت بگم… 🥹❤️</h1>
+      <p class="proposal-copy">راستش این همه سؤال فقط یه بهونه بود که یه چیزی رو بهت بگم…<br><br>
+      من ازت خوشم میاد و دوست دارم بیشتر از یه دوست معمولی توی زندگیم داشته باشمت.<br><br>
+      دوست دارم بیشتر باهات حرف بزنم، بیشتر بخندیم و با هم خاطره‌های قشنگ بسازیم.<br><br>
+      حاضری یه فرصت به ما دوتا بدی؟ 💗</p>
+      <div class="proposal-actions">
+        <button id="yesBtn" class="primary-btn">آرههههه 😍❤️</button>
+        <button id="thinkBtn" class="soft-btn">بذار بیشتر فکر کنم 🙈</button>
+      </div>
+      <div id="responseBox" class="response-box hidden" role="status"></div>
+      <p id="sendStatus" class="send-status" aria-live="polite"></p>
+    </section>
+
+    <footer>ساخته‌شده با کلی ذوق و قلب صورتی 💗</footer>
+  </main>
+  <div id="heartBurst" class="heart-burst" aria-hidden="true"></div>
+  <script src="/app.js"></script>
+</body>
+</html>
