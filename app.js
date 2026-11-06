@@ -1,4 +1,10 @@
 
+"use strict";
+
+// ======================================
+// سوال‌های بازی
+// ======================================
+
 const questions = [
   {
     q: "تا حالا شده منتظر پیام من باشی؟ 🥹",
@@ -38,9 +44,28 @@ const questions = [
   }
 ];
 
+// ======================================
+// ابزارهای اصلی
+// ======================================
+
 const $ = id => document.getElementById(id);
 
-const views = ["welcome", "game", "result", "proposal"];
+const views = [
+  "welcome",
+  "game",
+  "result",
+  "proposal"
+];
+
+const persian = number =>
+  String(number).replace(
+    /\d/g,
+    digit => "۰۱۲۳۴۵۶۷۸۹"[digit]
+  );
+
+// ======================================
+// وضعیت بازی
+// ======================================
 
 let index = 0;
 let score = 50;
@@ -48,13 +73,19 @@ let answers = [];
 let instagramAnswer = "";
 let finalChoice = null;
 let sending = false;
+let completed = false;
 
-const persian = n =>
-  String(n).replace(/\d/g, d => "۰۱۲۳۴۵۶۷۸۹"[d]);
+// ======================================
+// نمایش صفحات
+// ======================================
 
 function show(id) {
-  views.forEach(v => {
-    $(v).classList.toggle("hidden", v !== id);
+  views.forEach(view => {
+    const element = $(view);
+
+    if (element) {
+      element.classList.toggle("hidden", view !== id);
+    }
   });
 
   window.scrollTo({
@@ -63,11 +94,19 @@ function show(id) {
   });
 }
 
+// ======================================
+// بروزرسانی امتیاز
+// ======================================
+
 function updateMeter() {
   $("meterFill").style.width = `${score}%`;
   $("meterHeart").style.left = `${score}%`;
   $("percent").textContent = `${persian(score)}٪`;
 }
+
+// ======================================
+// نمایش سوال
+// ======================================
 
 function renderQuestion() {
   const item = questions[index];
@@ -85,14 +124,17 @@ function renderQuestion() {
 
   $("questionEmoji").textContent = item.emoji;
   $("questionText").textContent = item.q;
+
   $("answers").innerHTML = "";
 
-  // سؤال ششم: دریافت اختیاری اینستاگرام
+  // سوال ششم: دریافت آیدی اینستاگرام
   if (item.type === "text") {
+
     const wrapper = document.createElement("div");
     wrapper.className = "instagram-question";
 
     const input = document.createElement("input");
+
     input.id = "instagramInput";
     input.type = "text";
     input.maxLength = 100;
@@ -102,12 +144,20 @@ function renderQuestion() {
     input.className = "instagram-input";
     input.value = instagramAnswer;
 
+    input.setAttribute(
+      "aria-label",
+      "آیدی اینستاگرام"
+    );
+
     const note = document.createElement("p");
+
     note.className = "instagram-note";
+
     note.textContent =
       "این قسمت کاملاً اختیاریه؛ اگه راحت نیستی می‌تونی خالی بذاری 🌷";
 
     const button = document.createElement("button");
+
     button.type = "button";
     button.className = "instagram-submit-btn";
     button.textContent = "ثبت و ادامه 💜";
@@ -116,21 +166,25 @@ function renderQuestion() {
 
     input.addEventListener("keydown", event => {
       if (event.key === "Enter") {
+        event.preventDefault();
         submitInstagram();
       }
     });
 
     wrapper.append(input, note, button);
+
     $("answers").appendChild(wrapper);
 
     input.focus();
 
   } else {
+
     [item.yes, item.no].forEach((label, choice) => {
+
       const button = document.createElement("button");
 
-      button.className = "answer-btn";
       button.type = "button";
+      button.className = "answer-btn";
       button.textContent = label;
 
       button.addEventListener("click", () => {
@@ -138,24 +192,45 @@ function renderQuestion() {
       });
 
       $("answers").appendChild(button);
+
     });
+
   }
 
   updateMeter();
 }
 
+// ======================================
+// افکت قلب‌ها
+// ======================================
+
 function burst() {
   const host = $("heartBurst");
-  const symbols = ["💜", "💕", "💘", "✨", "💗"];
+
+  if (!host) return;
+
+  const symbols = [
+    "💜",
+    "💕",
+    "💘",
+    "✨",
+    "💗"
+  ];
 
   for (let i = 0; i < 13; i++) {
+
     const particle = document.createElement("span");
 
     particle.className = "heart-particle";
-    particle.textContent = symbols[i % symbols.length];
 
-    particle.style.left = `${35 + Math.random() * 30}%`;
-    particle.style.top = `${38 + Math.random() * 22}%`;
+    particle.textContent =
+      symbols[i % symbols.length];
+
+    particle.style.left =
+      `${35 + Math.random() * 30}%`;
+
+    particle.style.top =
+      `${38 + Math.random() * 22}%`;
 
     particle.style.setProperty(
       "--x",
@@ -169,42 +244,73 @@ function burst() {
 
     host.appendChild(particle);
 
-    setTimeout(() => particle.remove(), 1200);
+    setTimeout(() => {
+      particle.remove();
+    }, 1200);
+
   }
 }
 
-function choose(choice, button) {
-  if (button.disabled || index >= 5) return;
+// ======================================
+// ثبت جواب بله یا خیر
+// ======================================
 
-  [...$("answers").children].forEach(b => {
-    b.disabled = true;
+function choose(choice, button) {
+
+  if (
+    button.disabled ||
+    index >= 5 ||
+    answers[index] !== undefined
+  ) {
+    return;
+  }
+
+  const buttons = $("answers").querySelectorAll("button");
+
+  buttons.forEach(item => {
+    item.disabled = true;
   });
 
   button.classList.add("selected");
 
-  // ذخیره فقط جواب پنج سؤال بله/خیر
   answers[index] = choice;
 
   score = Math.max(
     0,
-    Math.min(100, score + (choice === 0 ? 10 : -10))
+    Math.min(
+      100,
+      score + (choice === 0 ? 10 : -10)
+    )
   );
 
   updateMeter();
   burst();
 
   setTimeout(() => {
+
     index++;
+
     renderQuestion();
+
   }, 850);
+
 }
 
+// ======================================
+// ثبت آیدی اینستاگرام
+// ======================================
+
 function submitInstagram() {
-  const input = $("answers").querySelector("#instagramInput");
+
+  if (index !== 5) return;
+
+  const input =
+    $("answers").querySelector("#instagramInput");
 
   if (!input) return;
 
-  instagramAnswer = input.value.trim().slice(0, 100);
+  instagramAnswer =
+    input.value.trim().slice(0, 100);
 
   index++;
 
@@ -213,53 +319,95 @@ function submitInstagram() {
   } else {
     showResult();
   }
+
 }
 
+// ======================================
+// نمایش نتیجه
+// ======================================
+
 function showResult() {
-  const positives = answers.filter(x => x === 0).length;
-  const negatives = answers.filter(x => x === 1).length;
 
-  $("finalScore").textContent = `${persian(score)}٪`;
+  if (completed) return;
 
-  $("positiveCount").textContent = persian(positives);
-  $("negativeCount").textContent = persian(negatives);
+  completed = true;
+
+  const positives =
+    answers.filter(answer => answer === 0).length;
+
+  const negatives =
+    answers.filter(answer => answer === 1).length;
+
+  $("finalScore").textContent =
+    `${persian(score)}٪`;
+
+  $("positiveCount").textContent =
+    persian(positives);
+
+  $("negativeCount").textContent =
+    persian(negatives);
 
   let message;
 
   if (positives >= 4) {
+
     message =
       "چه جواب‌های قشنگی! 💜 به نظر میاد از صحبت کردن و وقت گذروندن با هم حس خوبی داری. 🥹";
+
   } else if (positives >= 2) {
+
     message =
       "جواب‌هات یه ترکیب بامزه بود! 💕 شاید هنوز برای شناخت بیشتر همدیگه جا داشته باشیم.";
+
   } else {
+
     message =
       "ممنون که صادقانه جواب دادی! 🌷 مهم اینه که راحت باشی و همون حسی رو بگی که واقعاً داری.";
+
   }
 
   $("resultMessage").textContent = message;
 
   show("result");
+
   burst();
+
 }
 
+// ======================================
+// ساخت اطلاعات ارسالی
+// ======================================
+
 function makePayload() {
-  const quizQuestions = questions.filter(q => !q.type);
+
+  const quizQuestions =
+    questions.filter(question => !question.type);
 
   return {
+
     name: "مبینا",
 
-    // فقط پنج سؤال بله و خیر
+    // فقط پنج سوال بله و خیر
     answers: quizQuestions.map((question, i) => ({
+
       question: question.q,
-      answer: answers[i] === 0 ? question.yes : question.no,
+
+      answer:
+        answers[i] === 0
+          ? question.yes
+          : question.no,
+
       positive: answers[i] === 0
+
     })),
 
     score,
 
-    positiveCount: answers.filter(a => a === 0).length,
-    negativeCount: answers.filter(a => a === 1).length,
+    positiveCount:
+      answers.filter(answer => answer === 0).length,
+
+    negativeCount:
+      answers.filter(answer => answer === 1).length,
 
     // آیدی اینستاگرام جداگانه
     instagram: instagramAnswer,
@@ -269,14 +417,24 @@ function makePayload() {
 
     completedAt: new Date().toISOString(),
 
-    submissionId: window.crypto?.randomUUID
-      ? window.crypto.randomUUID()
-      : `${Date.now()}-${Math.random().toString(16).slice(2)}`
+    submissionId:
+      window.crypto?.randomUUID
+        ? window.crypto.randomUUID()
+        : `${Date.now()}-${Math.random().toString(16).slice(2)}`
+
   };
+
 }
 
+// ======================================
+// ارسال اطلاعات به Netlify و تلگرام
+// ======================================
+
 async function sendResult() {
-  if (sending) return;
+
+  if (sending || finalChoice === null) {
+    return;
+  }
 
   sending = true;
 
@@ -287,91 +445,145 @@ async function sendResult() {
     "دارم نتیجه رو ارسال می‌کنم… 💌";
 
   try {
+
     const payload = makePayload();
 
     const response = await fetch(
       "/.netlify/functions/submit-result",
       {
         method: "POST",
+
         headers: {
           "Content-Type": "application/json"
         },
+
         body: JSON.stringify(payload)
+
       }
     );
 
-    const data = await response.json().catch(() => ({}));
+    const data =
+      await response.json().catch(() => ({}));
 
     if (!response.ok) {
-      throw new Error(data.error || "ارسال انجام نشد");
+
+      throw new Error(
+        data.error || "ارسال انجام نشد"
+      );
+
     }
 
     $("sendStatus").textContent =
       "نتیجه با موفقیت برای سازنده ارسال شد. 💜";
 
   } catch (error) {
+
     console.error("Submit error:", error);
 
     $("sendStatus").textContent =
-      "نتونستم نتیجه رو ارسال کنم. لطفاً اتصال اینترنت رو بررسی کن و به سازنده خبر بده. 🌷";
+      "ارسال انجام نشد. می‌تونی دوباره تلاش کنی. 🌷";
 
     $("sendStatus").title = error.message;
 
+    // امکان تلاش مجدد
     $("yesBtn").disabled = false;
     $("thinkBtn").disabled = false;
 
     sending = false;
+
   }
+
 }
 
+// ======================================
+// پاسخ به پیشنهاد نهایی
+// ======================================
+
 function answerProposal(choice) {
-  if (finalChoice !== null || sending) return;
+
+  if (
+    finalChoice !== null ||
+    sending
+  ) {
+    return;
+  }
 
   finalChoice = choice;
 
   $("responseBox").textContent =
     choice === "yes"
+
       ? "چه جواب قشنگی! ❤️ خوشحالم که این حس رو داری. امیدوارم هر اتفاقی می‌افته، قشنگ و از روی رضایت هر دومون باشه. 🥹"
+
       : "هیچ عجله‌ای نیست مبینا! 🙈 مهم اینه که با خیال راحت و وقتی خودت خواستی تصمیم بگیری. 🌷";
 
   $("responseBox").classList.remove("hidden");
 
   burst();
+
   sendResult();
+
 }
 
-// شروع دوباره بازی
+// ======================================
+// شروع بازی
+// ======================================
+
 $("startBtn").addEventListener("click", () => {
+
   index = 0;
   score = 50;
+
   answers = [];
+
   instagramAnswer = "";
+
   finalChoice = null;
+
   sending = false;
 
+  completed = false;
+
   $("responseBox").classList.add("hidden");
+
   $("responseBox").textContent = "";
 
   $("sendStatus").textContent = "";
+
   $("sendStatus").title = "";
 
   $("yesBtn").disabled = false;
+
   $("thinkBtn").disabled = false;
 
   show("game");
+
   renderQuestion();
+
 });
 
+// ======================================
 // رفتن به پیشنهاد نهایی
+// ======================================
+
 $("toProposalBtn").addEventListener("click", () => {
+
   show("proposal");
+
 });
 
-// پاسخ به پیشنهاد
+// ======================================
+// دکمه‌های پاسخ نهایی
+// ======================================
+
 $("yesBtn").addEventListener("click", () => {
+
   answerProposal("yes");
+
 });
 
 $("thinkBtn").addEventListener("click", () => {
+
   answerProposal("think");
+
 });
