@@ -39,6 +39,7 @@ const questions = [
 ];
 
 const $ = id => document.getElementById(id);
+
 const views = ["welcome", "game", "result", "proposal"];
 
 let index = 0;
@@ -52,8 +53,14 @@ const persian = n =>
   String(n).replace(/\d/g, d => "۰۱۲۳۴۵۶۷۸۹"[d]);
 
 function show(id) {
-  views.forEach(v => $(v).classList.toggle("hidden", v !== id));
-  window.scrollTo({ top: 0, behavior: "smooth" });
+  views.forEach(v => {
+    $(v).classList.toggle("hidden", v !== id);
+  });
+
+  window.scrollTo({
+    top: 0,
+    behavior: "smooth"
+  });
 }
 
 function updateMeter() {
@@ -65,6 +72,11 @@ function updateMeter() {
 function renderQuestion() {
   const item = questions[index];
 
+  if (!item) {
+    showResult();
+    return;
+  }
+
   $("stepLabel").textContent =
     `سؤال ${persian(index + 1)} از ${persian(questions.length)}`;
 
@@ -75,7 +87,7 @@ function renderQuestion() {
   $("questionText").textContent = item.q;
   $("answers").innerHTML = "";
 
-  // سؤال ششم: دریافت اختیاری آیدی اینستاگرام
+  // سؤال ششم: دریافت اختیاری اینستاگرام
   if (item.type === "text") {
     const wrapper = document.createElement("div");
     wrapper.className = "instagram-question";
@@ -99,6 +111,7 @@ function renderQuestion() {
     button.type = "button";
     button.className = "instagram-submit-btn";
     button.textContent = "ثبت و ادامه 💜";
+
     button.addEventListener("click", submitInstagram);
 
     input.addEventListener("keydown", event => {
@@ -110,13 +123,20 @@ function renderQuestion() {
     wrapper.append(input, note, button);
     $("answers").appendChild(wrapper);
 
+    input.focus();
+
   } else {
     [item.yes, item.no].forEach((label, choice) => {
       const button = document.createElement("button");
+
       button.className = "answer-btn";
       button.type = "button";
       button.textContent = label;
-      button.addEventListener("click", () => choose(choice, button));
+
+      button.addEventListener("click", () => {
+        choose(choice, button);
+      });
+
       $("answers").appendChild(button);
     });
   }
@@ -130,12 +150,23 @@ function burst() {
 
   for (let i = 0; i < 13; i++) {
     const particle = document.createElement("span");
+
     particle.className = "heart-particle";
     particle.textContent = symbols[i % symbols.length];
+
     particle.style.left = `${35 + Math.random() * 30}%`;
     particle.style.top = `${38 + Math.random() * 22}%`;
-    particle.style.setProperty("--x", `${(Math.random() - 0.5) * 300}px`);
-    particle.style.setProperty("--y", `${-70 - Math.random() * 230}px`);
+
+    particle.style.setProperty(
+      "--x",
+      `${(Math.random() - 0.5) * 300}px`
+    );
+
+    particle.style.setProperty(
+      "--y",
+      `${-70 - Math.random() * 230}px`
+    );
+
     host.appendChild(particle);
 
     setTimeout(() => particle.remove(), 1200);
@@ -143,7 +174,7 @@ function burst() {
 }
 
 function choose(choice, button) {
-  if (button.disabled) return;
+  if (button.disabled || index >= 5) return;
 
   [...$("answers").children].forEach(b => {
     b.disabled = true;
@@ -151,6 +182,7 @@ function choose(choice, button) {
 
   button.classList.add("selected");
 
+  // ذخیره فقط جواب پنج سؤال بله/خیر
   answers[index] = choice;
 
   score = Math.max(
@@ -168,10 +200,10 @@ function choose(choice, button) {
 }
 
 function submitInstagram() {
-  const input = $("instagramInput");
+  const input = $("answers").querySelector("#instagramInput");
+
   if (!input) return;
 
-  // ذخیره آیدی؛ خالی بودن آن مجاز است
   instagramAnswer = input.value.trim().slice(0, 100);
 
   index++;
@@ -188,6 +220,7 @@ function showResult() {
   const negatives = answers.filter(x => x === 1).length;
 
   $("finalScore").textContent = `${persian(score)}٪`;
+
   $("positiveCount").textContent = persian(positives);
   $("negativeCount").textContent = persian(negatives);
 
@@ -205,29 +238,35 @@ function showResult() {
   }
 
   $("resultMessage").textContent = message;
+
   show("result");
   burst();
 }
 
 function makePayload() {
+  const quizQuestions = questions.filter(q => !q.type);
+
   return {
     name: "مبینا",
 
-    // فقط پنج سؤال بله/خیر در answers قرار می‌گیرند
-    answers: answers.map((answer, i) => ({
-      question: questions[i].q,
-      answer: answer === 0 ? questions[i].yes : questions[i].no,
-      positive: answer === 0
+    // فقط پنج سؤال بله و خیر
+    answers: quizQuestions.map((question, i) => ({
+      question: question.q,
+      answer: answers[i] === 0 ? question.yes : question.no,
+      positive: answers[i] === 0
     })),
 
     score,
+
     positiveCount: answers.filter(a => a === 0).length,
     negativeCount: answers.filter(a => a === 1).length,
 
-    // آیدی سؤال ششم با نام instagram ارسال می‌شود
+    // آیدی اینستاگرام جداگانه
     instagram: instagramAnswer,
 
+    // پاسخ پیشنهاد نهایی
     proposalResponse: finalChoice,
+
     completedAt: new Date().toISOString(),
 
     submissionId: window.crypto?.randomUUID
@@ -240,9 +279,12 @@ async function sendResult() {
   if (sending) return;
 
   sending = true;
+
   $("yesBtn").disabled = true;
   $("thinkBtn").disabled = true;
-  $("sendStatus").textContent = "دارم نتیجه رو ارسال می‌کنم… 💌";
+
+  $("sendStatus").textContent =
+    "دارم نتیجه رو ارسال می‌کنم… 💌";
 
   try {
     const payload = makePayload();
@@ -274,14 +316,16 @@ async function sendResult() {
       "نتونستم نتیجه رو ارسال کنم. لطفاً اتصال اینترنت رو بررسی کن و به سازنده خبر بده. 🌷";
 
     $("sendStatus").title = error.message;
+
     $("yesBtn").disabled = false;
     $("thinkBtn").disabled = false;
+
     sending = false;
   }
 }
 
 function answerProposal(choice) {
-  if (finalChoice !== null) return;
+  if (finalChoice !== null || sending) return;
 
   finalChoice = choice;
 
@@ -296,6 +340,7 @@ function answerProposal(choice) {
   sendResult();
 }
 
+// شروع دوباره بازی
 $("startBtn").addEventListener("click", () => {
   index = 0;
   score = 50;
@@ -306,7 +351,9 @@ $("startBtn").addEventListener("click", () => {
 
   $("responseBox").classList.add("hidden");
   $("responseBox").textContent = "";
+
   $("sendStatus").textContent = "";
+  $("sendStatus").title = "";
 
   $("yesBtn").disabled = false;
   $("thinkBtn").disabled = false;
@@ -315,8 +362,16 @@ $("startBtn").addEventListener("click", () => {
   renderQuestion();
 });
 
-$("toProposalBtn").addEventListener("click", () => show("proposal"));
+// رفتن به پیشنهاد نهایی
+$("toProposalBtn").addEventListener("click", () => {
+  show("proposal");
+});
 
-$("yesBtn").addEventListener("click", () => answerProposal("yes"));
+// پاسخ به پیشنهاد
+$("yesBtn").addEventListener("click", () => {
+  answerProposal("yes");
+});
 
-$("thinkBtn").addEventListener("click", () => answerProposal("think"));
+$("thinkBtn").addEventListener("click", () => {
+  answerProposal("think");
+});
