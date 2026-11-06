@@ -6,6 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#fff0f6">
   <meta name="description" content="یک بازی کوچولوی دوستانه برای مبینا">
+
   <title>Mobina’s Love Test 💗</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -21,6 +22,7 @@
 
 <body>
 
+  <!-- پس‌زمینه متحرک -->
   <div class="ambient" aria-hidden="true">
     <span>💗</span>
     <span>💕</span>
@@ -32,17 +34,24 @@
 
   <main class="shell">
 
+    <!-- سربرگ -->
     <header class="topline">
       <div class="brand">
         <span class="brand-heart">♥</span>
         Mobina’s Love Test
       </div>
 
-      <span class="tiny-tag">یه بازی کوچولوی صورتی 🎀</span>
+      <span class="tiny-tag">
+        یه بازی کوچولوی صورتی 🎀
+      </span>
     </header>
 
     <!-- صفحه شروع -->
-    <section id="welcome" class="panel welcome">
+    <section
+      id="welcome"
+      class="panel welcome"
+      aria-labelledby="welcomeTitle"
+    >
 
       <div class="hero-art" aria-hidden="true">
         <span class="hero-heart">💗</span>
@@ -51,15 +60,23 @@
         <span class="mini-bear">🧸</span>
       </div>
 
-      <p class="eyebrow">یه سورپرایز کوچولو برات داریم</p>
+      <p class="eyebrow">
+        یه سورپرایز کوچولو برات داریم
+      </p>
 
-      <h1>سلام مبینا! <span>💗</span></h1>
+      <h1 id="welcomeTitle">
+        سلام مبینا! <span>💗</span>
+      </h1>
 
       <p class="intro">
         چندتا سؤال کوچولو دارم؛ می‌خوام بدونم وقتی با منی چه حسی داری! 🥹
       </p>
 
-      <button id="startBtn" class="primary-btn">
+      <button
+        id="startBtn"
+        class="primary-btn"
+        type="button"
+      >
         شروع کنیم؟ 💌
       </button>
 
@@ -70,13 +87,24 @@
     </section>
 
     <!-- بخش سؤال‌ها -->
-    <section id="game" class="panel game hidden" aria-live="polite">
+    <section
+      id="game"
+      class="panel game hidden"
+      aria-live="polite"
+      aria-labelledby="questionText"
+    >
 
       <div class="game-head">
-        <span class="step-label" id="stepLabel">سؤال ۱ از ۶</span>
-        <span class="cute-label">با صداقت جواب بده 🥹</span>
+        <span class="step-label" id="stepLabel">
+          سؤال ۱ از ۶
+        </span>
+
+        <span class="cute-label">
+          با صداقت جواب بده 🥹
+        </span>
       </div>
 
+      <!-- نشانگر امتیاز -->
       <div class="love-meter">
 
         <div class="meter-labels">
@@ -85,8 +113,19 @@
         </div>
 
         <div class="meter-track">
-          <div id="meterFill" class="meter-fill"></div>
-          <span id="meterHeart" class="meter-heart">💗</span>
+          <div
+            id="meterFill"
+            class="meter-fill"
+            style="width: 50%"
+          ></div>
+
+          <span
+            id="meterHeart"
+            class="meter-heart"
+            style="left: 50%"
+          >
+            💗
+          </span>
         </div>
 
         <div class="meter-foot">
@@ -96,15 +135,29 @@
 
       </div>
 
+      <!-- کارت سؤال -->
       <div class="question-card">
 
-        <div class="question-number" id="questionNumber">۰۱</div>
+        <div
+          class="question-number"
+          id="questionNumber"
+        >
+          ۰۱
+        </div>
 
-        <div class="question-emoji" id="questionEmoji">🥹</div>
+        <div
+          class="question-emoji"
+          id="questionEmoji"
+        >
+          🥹
+        </div>
 
         <h2 id="questionText"></h2>
 
-        <div id="answers" class="answers"></div>
+        <div
+          id="answers"
+          class="answers"
+        ></div>
 
       </div>
 
@@ -114,16 +167,25 @@
 
     </section>
 
-    <!-- نتیجه -->
-    <section id="result" class="panel result hidden" aria-live="polite">
+    <!-- صفحه نتیجه -->
+    <section
+      id="result"
+      class="panel result hidden"
+      aria-live="polite"
+      aria-labelledby="resultTitle"
+    >
 
       <div class="result-confetti" aria-hidden="true">
         💗 ✨ 💕 ✨ 💘
       </div>
 
-      <p class="eyebrow">پایان بازی کوچولو</p>
+      <p class="eyebrow">
+        پایان بازی کوچولو
+      </p>
 
-      <h1>نتیجه جواب‌هات! 🌸</h1>
+      <h1 id="resultTitle">
+        نتیجه جواب‌هات! 🌸
+      </h1>
 
       <div class="score-orb">
         <strong id="finalScore">۵۰٪</strong>
@@ -144,57 +206,101 @@
 
       </div>
 
-      <p id="resultMessage" class="result-message"></p>
+      <p
+        id="resultMessage"
+        class="result-message"
+      ></p>
 
-      <button id="toProposalBtn" class="primary-btn">
+      <button
+        id="toProposalBtn"
+        class="primary-btn"
+        type="button"
+      >
         یه حرفی مونده… 💌
       </button>
 
     </section>
 
     <!-- پیشنهاد نهایی -->
-    <section id="proposal" class="panel proposal hidden" aria-live="polite">
+    <section
+      id="proposal"
+      class="panel proposal hidden"
+      aria-live="polite"
+      aria-labelledby="proposalTitle"
+    >
 
       <div class="proposal-top">
         💌 <span>یه سؤال مهم‌تر</span> 💌
       </div>
 
-      <h1>مبینا، یه سؤال ازت دارم… 🥹</h1>
+      <h1 id="proposalTitle">
+        مبینا، یه سؤال ازت دارم… 🥹
+      </h1>
 
       <p class="proposal-copy">
         راستش می‌خوام یه چیزی رو صادقانه بهت بگم…
+
         <br><br>
+
         من ازت خوشم میاد و حس می‌کنم دوست دارم بیشتر از یه دوست معمولی بشناسمت.
+
         <br><br>
+
         نمی‌خوام عجله‌ای داشته باشی یا تحت فشار باشی؛ فقط می‌خوام بدونم اگه این موضوع رو بدونی، چه حسی داری؟ 💗
       </p>
 
       <div class="proposal-actions">
 
-        <button id="yesBtn" class="primary-btn">
+        <button
+          id="yesBtn"
+          class="primary-btn"
+          type="button"
+        >
           منم حس خوبی دارم ❤️
         </button>
 
-        <button id="thinkBtn" class="soft-btn">
+        <button
+          id="thinkBtn"
+          class="soft-btn"
+          type="button"
+        >
           بذار بیشتر فکر کنم 🙈
         </button>
 
       </div>
 
-      <div id="responseBox" class="response-box hidden" role="status"></div>
+      <!-- نمایش پاسخ مبینا -->
+      <div
+        id="responseBox"
+        class="response-box hidden"
+        role="status"
+        aria-live="polite"
+      ></div>
 
-      <p id="sendStatus" class="send-status" aria-live="polite"></p>
+      <!-- وضعیت ارسال به تلگرام -->
+      <p
+        id="sendStatus"
+        class="send-status"
+        aria-live="polite"
+      ></p>
 
     </section>
 
+    <!-- پابرگ -->
     <footer>
       ساخته‌شده با کلی ذوق و قلب صورتی 💗
     </footer>
 
   </main>
 
-  <div id="heartBurst" class="heart-burst" aria-hidden="true"></div>
+  <!-- افکت قلب‌ها -->
+  <div
+    id="heartBurst"
+    class="heart-burst"
+    aria-hidden="true"
+  ></div>
 
+  <!-- کد اصلی سایت -->
   <script src="/app.js"></script>
 
 </body>
